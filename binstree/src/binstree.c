@@ -68,7 +68,6 @@ struct binstree* newtree(){
 
     // Alloco spazio per la struttura dati albero
     struct binstree *tree = (struct binstree*) smalloc(sizeof(struct binstree));
-
     // Assegna la radice come puntatore NULL
     tree->radix=NULL;
     // Restituisce il puntatore all'albero
