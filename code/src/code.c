@@ -16,6 +16,25 @@ struct node {
 
 };
 
+struct nnode {
+    
+    // Puntatore al figlio destro del nodo
+    struct nnode *dx;
+    // Puntatore al figlio sinistro
+    struct nnode *sx;
+    // Puntatore al node padre
+    struct nnode *parent;
+    // Oggetto incapsulato nel nodo
+    struct {
+
+        unsigned int key;
+
+        void* value;
+
+    };
+
+};
+
 
 // Define static safe malloc that prevents from memory allocations error
 static void* smalloc(unsigned int size){
@@ -47,54 +66,73 @@ struct code* newcode(){
 
 void enqueue(struct code *code, void* item){
 
-    assert(code != NULL && item != NULL);
+    assert(code != NULL);
 
-    struct node* to_insert = (struct node*) smalloc(sizeof(struct node));
+    struct node *newnode=smalloc(sizeof(struct node));
 
-    to_insert->prev=code->last, to_insert->item=item, to_insert->next=NULL;
+    newnode->prev = code->last;
+    newnode->item = item;
+    newnode->next = NULL;
 
-    if (code->last != NULL) code->last->next = to_insert;
+    if (code->last != NULL) 
+        code->last->next = newnode;
     
-    if (code->first == NULL) code->first = to_insert;
+    if (code->first == NULL) 
+        code->first = newnode;
 
-    code->last = to_insert;
+    code->last = newnode;
 
 }
 
-
 void* dequeue(struct code *code){
 
-    struct node *first;
+    struct node *first, *next;
 
     assert(code != NULL);
 
-    if ((first = code->first) != NULL) {
+    // Se il primo elemento della coda non è NULL
+    if (!isCodeEmpty(code)) {   
 
-        void* item = first->item;
 
-        code->first = first->next;
+        // Estrae l'oggetto contenuto nel primo nodo della coda
+        void* item = (first = code->first)->item;
+        //printf("Valore del nodo successivo al nodo attuale",((struct nnode*)first->next->item)->key);
+        // Assegna come nuovo primo nodo della coda il nodo successivo al nodo estratto
+        code->first = (next = first->next);
 
+        if (next != NULL) 
+            next->prev = NULL;
+
+        if (next == NULL) 
+            code->last = NULL;
+        
+        // Dealloca lo spazio riservato al nodo
         free(first);
-
+        // Restituisce l'oggetto
         return item;
 
     }
+    
+    // Se la coda è vuota restituisce NULL
+    return NULL;
 
 }
 
 void* first(struct code *code){
 
+    // Verifica che la coda non sia nulla
     assert(code != NULL);
 
-    return code->first->item;
+    return code->first != NULL ? code->first->item : NULL;
 
 }
 
 void* last(struct code *code){
 
+    // Verifica che la coda non sia nulla
     assert(code != NULL);
-
-    return code->last->item;
+    // Restituisce l'oggetto contenuto nel primo nodo se il primo nodo non è NULL
+    return code->last != NULL ? code->last->item : NULL;
 
 }
 
@@ -107,6 +145,8 @@ int isCodeEmpty(struct code *code){
 }
 
 void destroyCode(struct code *code){
+
+    assert(code != NULL);
 
     struct node *next=code->first, *this=next;
 
