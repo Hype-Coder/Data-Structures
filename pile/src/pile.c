@@ -1,4 +1,5 @@
 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -52,7 +53,8 @@ void push(struct pile *pile, void *item){
 
     struct node* to_insert = smalloc(sizeof(struct node));
     
-    to_insert->prev=pile->last, to_insert->item=item;
+    to_insert->prev = pile->last;
+    to_insert->item = item;
 
     pile->last = to_insert;
 
@@ -62,20 +64,24 @@ void* pop(struct pile *pile){
 
     // Verifica che il puntatore a pile non sia nullo
     assert(pile != NULL);
-    // Salva in una variabile l'ultimo elemento della pila da estrarre
-    struct node* to_extract = pile->last;
-    // Se l'ultimo valore è nullo allora la pila è vuota, altrimenti
-    if (to_extract != NULL){
+    
+    struct node *last = pile->last;
 
-        void *object = to_extract->item;
+    // Se l'ultimo valore è nullo allora la pila è vuota, altrimenti
+    if (!isPileEmpty(pile)){
+
+        void *object = last->item;
         // Assegna come ultimo elemento della pila, il nodo precedente a quello estratto
-        pile->last = (to_extract)->prev;
+        pile->last = last->prev;
         // Libera lo spazio di memoria riservato al nodo
-        free(to_extract);
+        free(last);
         // Restituisce l'oggetto contenuto nel nodo
         return object;
 
     }
+
+    // Se la pila è vuota restituisce NULL
+    return NULL;
 
 }
 
@@ -84,7 +90,7 @@ void* top(struct pile *pile){
     // Verifica che il puntatore a pile non sia nullo
     assert(pile != NULL);
     // Restituisce l'ultimo elemento della pila senza deallocarlo
-    return pile->last->item;
+    return pile->last != NULL ? pile->last->item : NULL;
 
 }
 
