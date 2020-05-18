@@ -1,6 +1,6 @@
 
-#include "../../pile/header/pile.h"
-#include "../../code/header/code.h" 
+#include "../../pile/header/pile.h"  // Require use of pile structure (you can find it inside repo)
+#include "../../code/header/code.h"  // Require use of code structure (you can also find it inside this repo)
 #include "../header/binstree.h"
 #include <stdio.h>
 #include <stdlib.h>
